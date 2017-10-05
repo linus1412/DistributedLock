@@ -37,37 +37,14 @@ import static java.util.Collections.singletonList;
 @Slf4j
 public class ScheduledApplication {
 
-  public static Environment environment;
-
-  @Autowired
-  public void setSomeThing(Environment environment){
-    ScheduledApplication.environment = environment;
-  }
-
 	public static void main(String[] args) {
 	  SpringApplication.run(ScheduledApplication.class, args);
-    startH2Server();
-  }
-
-  private static void startH2Server() {
-    if (Arrays.asList(environment.getActiveProfiles()).contains("db")) {
-      try {
-        Server h2Server = Server.createTcpServer().start();
-        if (h2Server.isRunning(true)) {
-          log.info("H2 server was started and is running.");
-        } else {
-          throw new RuntimeException("Could not start H2 server.");
-        }
-      } catch (SQLException e) {
-        throw new RuntimeException("Failed to start H2 server: ", e);
-      }
-    }
   }
 
   @Component
   public static class ScheduledTasks {
 
-    @Value("${app.name}")
+    @Value("${spring.profiles.active}")
     private String appName;
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
